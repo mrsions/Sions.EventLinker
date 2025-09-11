@@ -68,7 +68,7 @@ namespace SionsEventLink.Runtime
 - PackageManager를 통해서 `Sions.EventLinker/package.json`을 가져오세요.
   - 레포를 다운받은 뒤, disk로 가져오기
   - `Sions.EventLinker`를 프로젝트 `packages` 폴더에 넣기
-  - github 주소를 사용하기
+  - `https://github.com/mrsions/Sions.EventLinker.git?path=Sions.EventLinker` 주소 사용하기
   
 ## 사용방법
 - Project Settings > Sions > Event Link Generator에서 스캔 대상과 출력 폴더를 지정합니다.
