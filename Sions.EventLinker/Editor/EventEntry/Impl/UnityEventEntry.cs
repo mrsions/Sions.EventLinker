@@ -10,11 +10,19 @@ using UnityEngine.Events;
 
 namespace Sions.EventLinker
 {
+    /// <summary>
+    /// Unity Event 엔트리를 나타냅니다.
+    /// </summary>
     public class UnityEventEntry : EventEntryBase
     {
-        public readonly UnityEventCallState State;
-        public readonly Type? UnityEventType;
+        public readonly UnityEventCallState State;  // 이벤트 호출 상태
+        public readonly Type? UnityEventType;  // Unity Event 타입
 
+        /// <summary>
+        /// Unity Event 엔트리를 생성합니다.
+        /// </summary>
+        /// <param name="callProp">SerializedProperty의 호출 프로퍼티</param>
+        /// <param name="unityEventType">Unity Event 타입</param>
         public UnityEventEntry(SerializedProperty callProp, Type unityEventType)
         {
             Type = EventType.UnityEvent;
@@ -52,6 +60,13 @@ namespace Sions.EventLinker
             }
         }
 
+        /// <summary>
+        /// 인자 모드에 따라 파라미터 타입들을 가져옵니다.
+        /// </summary>
+        /// <param name="argumentMode">인자 모드</param>
+        /// <param name="args">인자 프로퍼티</param>
+        /// <param name="UnityEventType">Unity Event 타입</param>
+        /// <returns>파라미터 타입 배열</returns>
         private static Type[]? GetParameterTypes(PersistentListenerMode argumentMode, SerializedProperty args, Type UnityEventType)
         {
             switch (argumentMode)

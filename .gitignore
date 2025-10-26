@@ -121,3 +121,8 @@ node_modules/
 # tasks.json
 # tasks/ 
 .serena
+
+Docs
+Detail.md
+INTRODUCE.md
+INTRODUCE.guide.txt

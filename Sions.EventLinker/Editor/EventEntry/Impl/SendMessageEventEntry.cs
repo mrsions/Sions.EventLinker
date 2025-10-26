@@ -7,8 +7,15 @@ using UnityEditor;
 
 namespace Sions.EventLinker
 {
+    /// <summary>
+    /// SendMessage 이벤트 엔트리를 나타냅니다.
+    /// </summary>
     public class SendMessageEventEntry : EventEntryBase
     {
+        /// <summary>
+        /// SendMessage 이벤트 엔트리를 생성합니다.
+        /// </summary>
+        /// <param name="method">메서드 정보</param>
         public SendMessageEventEntry(MethodInfo method)
         {
             Type = EventType.SendMessage;

@@ -8,11 +8,18 @@ using UnityEngine;
 
 namespace Sions.EventLinker
 {
+    /// <summary>
+    /// 이벤트 링커 설정 클래스입니다.
+    /// </summary>
     [Serializable]
     public class EventLinkerSettings
     {
         const string k_SettingsPath = "ProjectSettings/Sions/EventLinker.json";
 
+        /// <summary>
+        /// 설정 파일을 로드합니다.
+        /// </summary>
+        /// <returns>EventLinkerSettings 인스턴스</returns>
         public static EventLinkerSettings Load()
         {
             try
@@ -32,6 +39,10 @@ namespace Sions.EventLinker
             return new();
         }
 
+        /// <summary>
+        /// 설정을 파일로 저장합니다.
+        /// </summary>
+        /// <param name="settings">저장할 설정</param>
         public static void Save(EventLinkerSettings settings)
         {
             string json = JsonUtility.ToJson(settings);
