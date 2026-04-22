@@ -1,6 +1,7 @@
 ﻿#nullable enable
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 
@@ -27,16 +28,45 @@ namespace Sions.EventLinker
             var so = new SerializedObject(obj);
             var it = so.GetIterator();
 
+            const int maxDepth = 50;
+            var visitedManagedRefs = new HashSet<long>();
+
             var enterChildren = true;
             while (it.Next(enterChildren))
             {
-                enterChildren = true;
-                if (!IsEventType(it, out var eventType)) continue;
+                // depth 제한
+                if (it.depth >= maxDepth)
+                {
+                    enterChildren = false;
+                    continue;
+                }
 
+                // 순환 참조 방지
+                if (it.propertyType == SerializedPropertyType.ManagedReference)
+                {
+                    long id = it.managedReferenceId;
+
+                    // null ref는 제외
+                    if (id != 0)
+                    {
+                        // 이미 본 managed reference면 다시 그 내부로 들어가지 않음
+                        if (!visitedManagedRefs.Add(id))
+                        {
+                            enterChildren = false;
+                            continue;
+                        }
+                    }
+                }
+
+                if (!IsEventType(it, out var eventType))
+                    continue;
+
+                // 이벤트 프로퍼티를 찾았으면, 그 자식 전체를 다시 타지 않도록 막음
                 enterChildren = false;
 
                 var calls = it.FindPropertyRelative("m_PersistentCalls.m_Calls");
-                if (calls.arraySize == 0) continue;
+                if (calls == null || calls.arraySize == 0)
+                    continue;
 
                 for (var i = 0; i < calls.arraySize; i++)
                 {
@@ -46,13 +76,22 @@ namespace Sions.EventLinker
             }
         }
 
+        private static string GetVisitKey(SerializedProperty property)
+        {
+            // managed reference는 propertyPath만으로 부족할 수 있어서 id도 같이 사용
+            if (property.propertyType == SerializedPropertyType.ManagedReference)
+            {
+                return $"{property.serializedObject.targetObject.GetEntityId()}|{property.propertyPath}|depth:{property.depth}|mrid:{property.managedReferenceId}";
+            }
+
+            return $"{property.serializedObject.targetObject.GetEntityId()}|{property.propertyPath}|depth:{property.depth}";
+        }
 
         private bool IsEventType(SerializedProperty it, [NotNullWhen(true)] out Type? type)
         {
             type = null;
 
             if (it.propertyType != SerializedPropertyType.Generic) return false;
-
             if (it.isArray) return false;
 
             type = GetUnityEventType(it);
@@ -101,6 +140,7 @@ namespace Sions.EventLinker
                     Debug.LogError(ex);
                 }
             }
+
             return null;
         }
     }
